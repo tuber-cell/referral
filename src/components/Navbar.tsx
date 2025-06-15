@@ -31,7 +31,7 @@ export default function Navbar({ handleDrawerToggle }: NavbarProps) {
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          YogaLife Referral Dashboard
+          YogaAsana Referral Dashboard
         </Typography>
         {currentUser && (
           <div>
