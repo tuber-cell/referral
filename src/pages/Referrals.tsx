@@ -16,8 +16,9 @@ import {
   Snackbar,
   Alert
 } from '@mui/material';
+import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
 interface Referral {
@@ -38,45 +39,76 @@ const Referrals: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
   const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success'|'error'>('success');
 
-  React.useEffect(() => {
-    const fetchReferrals = async () => {
-      if (currentUser?.uid) {
-        try {
-          // Get real referrals from Firestore subcollection
-          const referralsRef = collection(db, 'users', currentUser.uid, 'referrals');
-          const querySnapshot = await getDocs(referralsRef);
-          
-          const referralsData: Referral[] = [];
-          let total = 0;
-          
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            referralsData.push({
-              id: doc.id,
-              email: data.email,
-              date: new Date(data.date?.toDate() || data.date).toLocaleDateString(),
-              status: data.status,
-              points: data.points || 0,
-              subscriptionId: data.subscriptionId
-            });
-            total += data.points || 0;
+  const fetchReferrals = async () => {
+    if (currentUser?.uid) {
+      try {
+        const referralsRef = collection(db, 'users', currentUser.uid, 'referrals');
+        const querySnapshot = await getDocs(referralsRef);
+        
+        const referralsData: Referral[] = [];
+        let total = 0;
+        
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          referralsData.push({
+            id: doc.id,
+            email: data.email,
+            date: new Date(data.date?.toDate() || data.date).toLocaleDateString(),
+            status: data.status,
+            points: data.points || 0,
+            subscriptionId: data.subscriptionId
           });
-          
-          // Sort by date (newest first)
-          referralsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-          
-          setReferrals(referralsData);
-          setTotalPoints(total);
-        } catch (error) {
-          console.error('Error fetching referrals:', error);
-          showSnackbar('Failed to load referrals', 'error');
-        } finally {
-          setLoading(false);
-        }
+          total += data.points || 0;
+        });
+        
+        referralsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        
+        setReferrals(referralsData);
+        setTotalPoints(total);
+      } catch (error) {
+        console.error('Error fetching referrals:', error);
+        showSnackbar('Failed to load referrals', 'error');
+      } finally {
+        setLoading(false);
       }
-    };
+    }
+  };
 
-    fetchReferrals();
+  React.useEffect(() => {
+    if (!currentUser?.uid) {
+      setLoading(false);
+      return;
+    }
+
+    const referralsRef = collection(db, 'users', currentUser.uid, 'referrals');
+    const unsubscribe = onSnapshot(referralsRef, (snapshot) => {
+      const referralsData: Referral[] = [];
+      let total = 0;
+      
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        referralsData.push({
+          id: doc.id,
+          email: data.email,
+          date: new Date(data.date?.toDate() || data.date).toLocaleDateString(),
+          status: data.status,
+          points: data.points || 0,
+          subscriptionId: data.subscriptionId
+        });
+        total += data.points || 0;
+      });
+      
+      referralsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setReferrals(referralsData);
+      setTotalPoints(total);
+      setLoading(false);
+    }, (error) => {
+      console.error('Error listening to referrals:', error);
+      showSnackbar('Failed to load referrals', 'error');
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, [currentUser]);
 
   const showSnackbar = (message: string, severity: 'success'|'error') => {
@@ -91,7 +123,6 @@ const Referrals: React.FC = () => {
 
   const copyReferralCode = () => {
     if (currentUser?.uid) {
-      // Get the promo code from user document
       const getUserPromoCode = async () => {
         try {
           const userRef = doc(db, 'users', currentUser.uid);
@@ -126,9 +157,18 @@ const Referrals: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Your Referrals
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" gutterBottom>
+          Your Referrals
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<RefreshIcon />}
+          onClick={fetchReferrals}
+        >
+          Refresh
+        </Button>
+      </Box>
       
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Box>
@@ -193,9 +233,9 @@ const Referrals: React.FC = () => {
               <TableRow>
                 <TableCell colSpan={5} align="center">
                   No referrals yet. Share your promo code to earn points!
-                </TableCell>
-              </TableRow>
-            )}
+                </TableRow>
+              )
+            }
           </TableBody>
         </Table>
       </TableContainer>
