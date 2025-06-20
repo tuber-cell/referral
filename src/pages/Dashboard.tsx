@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
     };
     
     fetchUserData();
-  }, [currentUser, currentUserData]); // Add currentUserData to dependencies
+  }, [currentUser, currentUserData]);
 
   const copyToClipboard = () => {
     if (userData.promoCode) {
@@ -70,8 +70,8 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const progress = (userData.points / 10000) * 100;
-  const pointsNeeded = Math.max(0, 10000 - userData.points);
+  const progress = (userData.points / 50000) * 100; // Updated to 50,000 points
+  const pointsNeeded = Math.max(0, 50000 - userData.points); // Updated to 50,000 points
 
   const chartData = {
     labels: ['Points Earned', 'Points Remaining'],
@@ -90,14 +90,12 @@ const Dashboard: React.FC = () => {
         Dashboard
       </Typography>
       
-      {/* Cards Row - Replacing Grid */}
       <Box sx={{
         display: 'flex',
         flexWrap: 'wrap',
         gap: 3,
         mb: 3
       }}>
-        {/* Points Card */}
         <Box sx={{ 
           flex: '1 1 300px',
           minWidth: '300px',
@@ -118,7 +116,6 @@ const Dashboard: React.FC = () => {
           </Card>
         </Box>
         
-        {/* Referrals Card */}
         <Box sx={{ 
           flex: '1 1 300px',
           minWidth: '300px',
@@ -133,13 +130,12 @@ const Dashboard: React.FC = () => {
                 {userData.referrals.toLocaleString()}
               </Typography>
               <Typography variant="body2" component="p">
-                Each referral earns you 5 points
+                Each referral earns you 2 points
               </Typography>
             </CardContent>
           </Card>
         </Box>
         
-        {/* Withdrawals Card */}
         <Box sx={{ 
           flex: '1 1 300px',
           minWidth: '300px',
@@ -154,21 +150,19 @@ const Dashboard: React.FC = () => {
                 {userData.withdrawals.toLocaleString()}
               </Typography>
               <Typography variant="body2" component="p">
-                ₹10,000 per withdrawal
+                ₹50,000 per withdrawal
               </Typography>
             </CardContent>
           </Card>
         </Box>
       </Box>
       
-      {/* Second Row */}
       <Box sx={{
         display: 'flex',
         flexWrap: 'wrap',
         gap: 3,
         mb: 3
       }}>
-        {/* Promo Code Card - Updated from Referral Link Card */}
         <Box sx={{ 
           flex: '1 1 400px',
           minWidth: '300px'
@@ -199,13 +193,12 @@ const Dashboard: React.FC = () => {
                 }}
               />
               <Typography variant="body2" sx={{ mt: 1 }} component="p">
-                Share this code with friends. When they subscribe using it, you'll get 5 points.
+                Share this code with friends. When they subscribe using it, you'll get 2 points.
               </Typography>
             </CardContent>
           </Card>
         </Box>
         
-        {/* Progress Card */}
         <Box sx={{ 
           flex: '1 1 400px',
           minWidth: '300px'
@@ -230,7 +223,7 @@ const Dashboard: React.FC = () => {
                   </Typography>
                 </Box>
               </Box>
-              {userData.points >= 10000 ? (
+              {userData.points >= 50000 ? ( // Updated to 50,000 points
                 <Button 
                   variant="contained" 
                   color="success" 
@@ -238,7 +231,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => alert('Withdrawal functionality to be implemented')}
                   sx={{ py: 1.5 }}
                 >
-                  Withdraw ₹10,000
+                  Withdraw ₹50,000
                 </Button>
               ) : (
                 <Button 
@@ -255,7 +248,6 @@ const Dashboard: React.FC = () => {
         </Box>
       </Box>
       
-      {/* Chart Card */}
       <Box sx={{ mb: 3 }}>
         <Card>
           <CardContent>

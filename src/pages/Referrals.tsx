@@ -37,7 +37,7 @@ const Referrals: React.FC = () => {
   const [totalPoints, setTotalPoints] = React.useState(0);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success'|'error'>('success');
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success');
 
   const fetchReferrals = async () => {
     if (currentUser?.uid) {
@@ -111,7 +111,7 @@ const Referrals: React.FC = () => {
     return () => unsubscribe();
   }, [currentUser]);
 
-  const showSnackbar = (message: string, severity: 'success'|'error') => {
+  const showSnackbar = (message: string, severity: 'success' | 'error') => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -176,7 +176,7 @@ const Referrals: React.FC = () => {
             Total Referrals: {referrals.length}
           </Typography>
           <Typography variant="body1">
-            Points Earned: {totalPoints}/10,000
+            Points Earned: {totalPoints}/50000
           </Typography>
         </Box>
         
@@ -233,9 +233,9 @@ const Referrals: React.FC = () => {
               <TableRow>
                 <TableCell colSpan={5} align="center">
                   No referrals yet. Share your promo code to earn points!
-                </TableRow>
-              )
-            }
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
