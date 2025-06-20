@@ -61,13 +61,13 @@ const Withdrawals: React.FC = () => {
         Withdraw Earnings
       </Typography>
       
-      {userData.points >= 10000 ? (
+      {userData.points >= 50000 ? (
         <>
           <Typography variant="body1" gutterBottom>
             You have {userData.points.toLocaleString()} points available for withdrawal.
           </Typography>
           <Typography variant="body1" gutterBottom>
-            Each withdrawal converts 10,000 points to ₹10,000.
+            Each withdrawal converts 50,000 points to ₹10,000.
           </Typography>
           <Button
             variant="contained"
@@ -85,10 +85,10 @@ const Withdrawals: React.FC = () => {
             You currently have {userData.points.toLocaleString()} points.
           </Typography>
           <Typography variant="body1" gutterBottom>
-            You need {10000 - userData.points} more points to make a withdrawal.
+            You need {50000 - userData.points} more points to make a withdrawal.
           </Typography>
           <Typography variant="body1">
-            Each withdrawal converts 10,000 points to ₹10,000.
+            Each withdrawal converts 50,000 points to ₹10,000.
           </Typography>
         </>
       )}

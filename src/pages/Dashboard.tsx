@@ -150,7 +150,7 @@ const Dashboard: React.FC = () => {
                 {userData.withdrawals.toLocaleString()}
               </Typography>
               <Typography variant="body2" component="p">
-                ₹50,000 per withdrawal
+                ₹10,000 per withdrawal
               </Typography>
             </CardContent>
           </Card>
