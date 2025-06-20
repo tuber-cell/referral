@@ -52,7 +52,7 @@ export const referralSystem = {
         const referralDoc = querySnapshot.docs[0];
         await updateDoc(referralDoc.ref, {
           status: 'completed',
-          points: 5,
+          points: 2,
           completedAt: new Date().toISOString(),
           subscriptionId
         });
@@ -60,7 +60,7 @@ export const referralSystem = {
         // Update the referrer's points
         const userRef = doc(db, 'users', referrerId);
         await updateDoc(userRef, {
-          points: increment(5),
+          points: increment(2),
           referrals: increment(1)
         });
         
