@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, query, getDoc , where, getDocs, doc, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { getFirestore, collection, query, getDoc, where, getDocs, doc, setDoc, updateDoc, increment } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -35,20 +35,19 @@ export const referralSystem = {
   },
 
   // Complete a referral (when referred user subscribes)
-  completeReferral: async (referrerId: string, referredEmail: string, subscriptionId: string) => {
+  completeReferral: async (referrerId: string, subscriptionId: string) => {
     try {
-      // Find the pending referral
+      // Find the pending referral for the referrer
       const referralsRef = collection(db, 'users', referrerId, 'referrals');
       const q = query(
-        referralsRef, 
-        where('email', '==', referredEmail),
+        referralsRef,
         where('status', '==', 'pending')
       );
       
       const querySnapshot = await getDocs(q);
       
       if (!querySnapshot.empty) {
-        // Update the referral
+        // Use the first pending referral (assuming one per referrer is active)
         const referralDoc = querySnapshot.docs[0];
         await updateDoc(referralDoc.ref, {
           status: 'completed',
